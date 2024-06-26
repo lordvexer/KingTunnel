@@ -22,10 +22,7 @@ show_menu() {
 
 # Function to install tunnel
 install_tunnel() {
-    echo "Installing Tunnel..."
-    stop 2
     echo "Creating RSA key..."
-    stop 2
     ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -N ""
 
     read -p "Enter Kharej server IP: " kharej_ip
@@ -37,22 +34,58 @@ install_tunnel() {
         iran_servers+=("$iran_server_ip")
     done
 
-    echo "Kharej server IP: $kharej_ip" > Kharej_server_ips.txt
-    echo "Number of Iran servers: $num_iran_servers"
-    echo "Iran servers IPs:" >> Iran_server_ips.txt
+    echo "Kharej server IP: $kharej_ip" > server_ips.txt
+    echo "Number of Iran servers: $num_iran_servers" >> server_ips.txt
+    echo "Iran servers IPs:" >> server_ips.txt
     for iran_server in "${iran_servers[@]}"; do
-        echo "$iran_server" >> servers_ips.txt
+        echo "$iran_server" >> server_ips.txt
     done
 
     echo "Copying RSA key to Iran servers..."
     for iran_server in "${iran_servers[@]}"; do
         ssh-copy-id -o StrictHostKeyChecking=no "$iran_server"
+        ssh "$iran_server" 'echo "GatewayPorts yes" >> /etc/ssh/sshd_config'
+        ssh "$iran_server" 'systemctl restart ssh.service'
+        ssh "$iran_server" 'reboot'
+    done
+
+    read -p "How many ports need to be tunneled? " num_ports
+    declare -a ports
+    for ((i = 1; i <= num_ports; i++)); do
+        read -p "Enter port $i: " port
+        ports+=("$port")
+    done
+
+    echo "Creating systemd service for each port..."
+    for port in "${ports[@]}"; do
+        for iran_server in "${iran_servers[@]}"; do
+            service_file="/etc/systemd/system/KingTunnel@${port}.service"
+            cat <<EOL | sudo tee $service_file
+[Unit]
+Description=Reverse SSH Tunnel Port $port to $iran_server
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=ssh -N -R 0.0.0.0:$port:localhost:$port root@$iran_server
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOL
+            sudo systemctl daemon-reload
+            sudo systemctl enable KingTunnel@$port
+            sudo systemctl start KingTunnel@$port
+            sudo systemctl status KingTunnel@$port
+        done
     done
 
     echo "Tunnel installation completed."
 }
 
-}
+
+
 
 # Function to uninstall tunnel
 uninstall_tunnel() {

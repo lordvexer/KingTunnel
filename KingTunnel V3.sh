@@ -224,8 +224,8 @@ backup() {
         echo "         Backup Menu          "
         echo "=============================="
         echo "1. Backup Marzban"
-        echo "2. Backup Sanaei"
-        echo "3. Backup Shahan"
+        echo "2. Backup Sanaei(Soon)"
+        echo "3. Backup Shahan(Soon)"
         echo "4. Back to Main Menu"
         echo "=============================="
         echo -n "Enter your choice [1-4]: "
@@ -241,15 +241,11 @@ backup() {
                 ;;
             2)
                 echo "Performing backup for Sanaei..."
-                # Replace with actual backup command for Sanaei
-                # Example: sudo rsync -av /path/to/sanaei /backup/location
-                echo "Sanaei backup completed."
+                backup
                 ;;
             3)
                 echo "Performing backup for Shahan..."
-                # Replace with actual backup command for Shahan
-                # Example: sudo rsync -av /path/to/shahan /backup/location
-                echo "Shahan backup completed."
+                backup
                 ;;
             4)
                 echo "Returning to Main Menu..."
@@ -262,13 +258,68 @@ backup() {
     done
 }
 
+# Function to restore Marzban from a backup file
+restore_marzban() {
+    echo "Restore Marzban from backup"
+    
+    # Prompt user for the backup file path
+    read -p "Enter the path of the backup file to restore: " backup_file_path
+    
+    # Check if the file exists
+    if [ ! -f "$backup_file_path" ]; then
+        echo "Error: Backup file not found!"
+        return
+    fi
+
+    # Extract the backup file to /var/lib/marzban/
+    sudo unzip -o "$backup_file_path" -d /var/lib/marzban/
+    
+    echo "Restore completed."
+}
 
 # Function to restore
 restore() {
     echo "Restoring..."
-    # Add the commands to restore here
+    sleep 2
+    while true; do
+        echo "=============================="
+        echo "         Restore Menu          "
+        echo "=============================="
+        echo "1. Restore Marzban"
+        echo "2. Restore Sanaei(Soon)"
+        echo "3. Restore Shahan(Soon)"
+        echo "4. Back to Main Menu"
+        echo "=============================="
+        echo -n "Enter your choice [1-4]: "
+        read choice
+        
+        case $choice in
+            1)
+                echo "Performing backup for Marzban..."
+                sleep 2
+                restore_marzban
+                echo "Marzban backup completed."
+                sleep 2
+                ;;
+            2)
+                echo "Comming Soon...."
+                Sleep 2
+                restore
+                ;;
+            3)
+                echo "Performing backup for Shahan..."
+                restore
+                ;;
+            4)
+                echo "Returning to Main Menu..."
+                return
+                ;;
+            *)
+                echo "Invalid choice. Please enter a number between 1 and 4."
+                ;;
+        esac
+    done
 }
-
 # Function to exit
 exit_script() {
     echo "Exiting..."

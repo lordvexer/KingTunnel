@@ -33,7 +33,7 @@ install_dependencies() {
 setup_king_script() {
     echo "Downloading the main script from GitHub..."
     sleep 2
-    wget -O ~/KingTunnel V3.sh https://github.com/lordvexer/KingTunnel/tree/main/KingTunnel V3.sh
+    wget -O ~/KingTunnel V3.sh https://raw.githubusercontent.com/lordvexer/KingTunnel/main/KingTunnel V3.sh
     chmod +x ~/KingTunnel V3.sh
 
     # Create an alias to run the script with the 'king' command

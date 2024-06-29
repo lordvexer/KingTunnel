@@ -1,7 +1,7 @@
 
 
 <h1 align="Center">King Script</h1>
-<p align="center"><a href="./README.md">فارسی</a>
+<p align="center"><a href="./README-FA.md">فارسی</a>
 <h2>Introduction</h2>
 The King Script provides a comprehensive solution for managing various software installations and network tunneling setups. It features an interactive menu that allows users to easily install, uninstall, and manage software like Marzban, Shahan, Sanaie, and tunneling services.
 

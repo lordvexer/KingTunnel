@@ -13,4 +13,6 @@ To install and run the King Script, follow these steps:
 
 Download and execute the installer script:
 
-(""curl -sL https://raw.githubusercontent.com/YourUsername/YourRepo/main/install_king.sh | bash"")
+"""ذشسا
+curl -sL https://raw.githubusercontent.com/YourUsername/YourRepo/main/install_king.sh | bash
+گگگ

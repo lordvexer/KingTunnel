@@ -29,7 +29,7 @@ install_dependencies() {
 # Function to download and setup the main script
 setup_king_script() {
     echo "Downloading the main script from GitHub..."
-    wget -O ~/king_script.sh https://raw.githubusercontent.com/YourUsername/YourRepo/main/king_script.sh
+    wget -O ~/king_script.sh https://github.com/lordvexer/KingTunnel/blob/main/Install_King%20V1/Install_King V1
     chmod +x ~/king_script.sh
 
     # Create an alias to run the script with the 'king' command

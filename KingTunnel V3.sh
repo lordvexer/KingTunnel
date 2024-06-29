@@ -34,18 +34,24 @@ install_tunnel() {
         iran_servers+=("$iran_server_ip")
     done
 
-    echo "Kharej server IP: $kharej_ip" > server_ips.txt
-    echo "Number of Iran servers: $num_iran_servers" >> server_ips.txt
-    echo "Iran servers IPs:" >> server_ips.txt
+    echo "Kharej server IP: $kharej_ip" > tunnel_config.txt
+    echo "Number of Iran servers: $num_iran_servers" >> tunnel_config.txt
+    echo "Iran servers IPs:" >> tunnel_config.txt
     for iran_server in "${iran_servers[@]}"; do
-        echo "$iran_server" >> server_ips.txt
+        echo "$iran_server" >> tunnel_config.txt
+    done
+
+    read -p "Choose protocol for tunnel (udp/tcp): " tunnel_protocol
+    while [[ "$tunnel_protocol" != "udp" && "$tunnel_protocol" != "tcp" ]]; do
+        echo "Invalid choice. Please choose 'udp' or 'tcp'."
+        read -p "Choose protocol for tunnel (udp/tcp): " tunnel_protocol
     done
 
     echo "Copying RSA key to Iran servers..."
     for iran_server in "${iran_servers[@]}"; do
         ssh-copy-id -o StrictHostKeyChecking=no "$iran_server"
-        ssh "$iran_server" 'echo "GatewayPorts yes" >> /etc/ssh/sshd_config'
-        ssh "$iran_server" 'systemctl restart sshd.service'
+        ssh "$iran_server" 'echo "GatewayPorts yes" >> /etc/ssh/ssh_config'
+        ssh "$iran_server" 'systemctl restart ssh.service'
         ssh "$iran_server" 'reboot'
     done
 
@@ -62,12 +68,12 @@ install_tunnel() {
             service_file="/etc/systemd/system/KingTunnel@${port}.service"
             cat <<EOL | sudo tee $service_file
 [Unit]
-Description=Reverse SSH Tunnel Port $port to $iran_server
+Description=Reverse SSH $tunnel_protocol Tunnel Port $port to $iran_server
 After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=ssh -N -R 0.0.0.0:$port:localhost:$port root@$iran_server
+ExecStart=ssh -N -${tunnel_protocol} -R 0.0.0.0:$port:localhost:$port root@$iran_server
 Restart=on-failure
 RestartSec=10
 
@@ -81,10 +87,24 @@ EOL
     done
 
     echo "Tunnel installation completed."
-    sleep 3
+
+    # Show status of KingTunnel services for 10 seconds
+    echo "Showing Tunnel Status for 10 seconds..."
     systemctl status KingTunnel@*
 
+    # Countdown for 10 seconds
+    for ((i = 10; i > 0; i--)); do
+        echo -ne "Returning to menu in $i seconds...\r"
+        sleep 1
+    done
+
+    # Clear the countdown message
+    echo -ne "\n"
+
+    # Return to main menu
+    return
 }
+
 
 
 
@@ -92,19 +112,18 @@ EOL
 
 # Function to uninstall tunnel
 uninstall_tunnel() {
-    if [ ! -f server_ips.txt ]; then
-        echo "server_ips.txt not found! Exiting..."
+    if [ ! -f tunnel_config.txt ]; then
+        echo "Tunnel configuration file (tunnel_config.txt) not found! Exiting..."
         return
     fi
 
-    source server_ips.txt
+    # Read data from the configuration file
+    kharej_ip=$(sed -n '1p' tunnel_config.txt | cut -d ' ' -f 4)
+    num_iran_servers=$(sed -n '2p' tunnel_config.txt | cut -d ' ' -f 5)
+    iran_servers=($(sed -n '3,$p' tunnel_config.txt))
 
-    read -p "How many ports need to be untunneled? " num_ports
-    declare -a ports
-    for ((i = 1; i <= num_ports; i++)); do
-        read -p "Enter port $i: " port
-        ports+=("$port")
-    done
+    num_ports=$(wc -l < <(sed -n '/Tunneled Ports:/,$ p' tunnel_config.txt))
+    ports=($(sed -n '/Tunneled Ports:/,$ p' tunnel_config.txt | sed '1d'))
 
     echo "Disabling and removing systemd service for each port..."
     for port in "${ports[@]}"; do
@@ -120,12 +139,25 @@ uninstall_tunnel() {
     echo "Tunnel uninstallation completed."
 }
 
-
 # Function to show tunnel status
 show_status_tunnel() {
     echo "Showing Tunnel Status..."
     systemctl status KingTunnel@*
+
+    # Countdown for 10 seconds
+    for ((i = 10; i > 0; i--)); do
+        echo -ne "Returning to menu in $i seconds...\r"
+        sleep 1
+    done
+
+    # Clear the countdown message
+    echo -ne "\n"
+
+    # Return to main menu
+    return
 }
+
+
 
 
 show_ports_traffic() {
@@ -164,7 +196,6 @@ show_ports_traffic() {
     echo "Exiting show ports traffic."
 }
 
-}
 
 # Function to install Marzban
 install_marzban() {

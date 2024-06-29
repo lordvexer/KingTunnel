@@ -20,7 +20,8 @@
 </p>
 
 ```bash
-curl -sL https://raw.githubusercontent.com/YourUsername/YourRepo/main/install_king.sh | bash
+curl -sL https://raw.githubusercontent.com/lordvexer/KingTunnel/main/Install_King%20V1.sh | bash
+
 ```
 
 <p style=text-align: left>2. پس از نصب، ترمینال خود را مجدداً راه‌اندازی کنید یا اجرا کنید:

@@ -8,6 +8,7 @@ command_exists() {
 # Function to install dependencies
 install_dependencies() {
     echo "Checking and installing necessary dependencies..."
+    sleep 2
 
     # List of dependencies
     dependencies=(curl wget unzip git ssh ssh-keygen systemctl tcpdump)
@@ -20,17 +21,20 @@ install_dependencies() {
             sudo apt-get install -y "$cmd"
         else
             echo "$cmd is already installed."
+            sleep 2
         fi
     done
 
     echo "All necessary dependencies are installed."
+    sleep 2
 }
 
 # Function to download and setup the main script
 setup_king_script() {
     echo "Downloading the main script from GitHub..."
-    wget -O ~/king_script.sh https://github.com/lordvexer/KingTunnel/blob/main/Install_King%20V1/Install_King V1
-    chmod +x ~/king_script.sh
+    sleep 2
+    wget -O ~/KingTunnel V3.sh https://github.com/lordvexer/KingTunnel/tree/main/KingTunnel V3.sh
+    chmod +x ~/KingTunnel V3.sh
 
     # Create an alias to run the script with the 'king' command
     if ! grep -q "alias king=" ~/.bashrc; then
@@ -39,10 +43,15 @@ setup_king_script() {
     fi
 
     echo "Setup completed. You can now run the script using the 'king' command."
+    sleep 2
 }
 
 # Main script execution
 install_dependencies
 setup_king_script
 
-echo "Installation completed. Please restart your terminal or run 'source ~/.bashrc' to use the 'king' command."
+echo "Installation completed.Reboot in 10 secend"
+sleep 2
+echo "Run Menu With "king" Command"
+sleep 8
+sudo systemctl reboot

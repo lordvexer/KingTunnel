@@ -17,7 +17,7 @@ To install and run the King Script, follow these steps:
 1. Download and execute the installer script:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/YourUsername/YourRepo/main/install_king.sh | bash
+curl -sL https://raw.githubusercontent.com/lordvexer/KingTunnel/tree/main/install_king.sh | bash
 ```
 
 2. After installation, restart your terminal or run:

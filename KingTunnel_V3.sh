@@ -87,6 +87,7 @@ EOL
     done
 
     echo "Tunnel installation completed."
+    sleep 5
 
     # Show status of KingTunnel services for 10 seconds
     echo "Showing Tunnel Status for 10 seconds..."
@@ -137,6 +138,7 @@ uninstall_tunnel() {
 
     sudo systemctl daemon-reload
     echo "Tunnel uninstallation completed."
+    sleep 5
 }
 
 # Function to show tunnel status
